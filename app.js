@@ -49,6 +49,16 @@ app.post('/todos', (req, res) => {
     .catch(error => console.log(error))
 })
 
+//瀏覽特定網頁
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id
+  return Todo.findById(id)
+    .lean()// 把 Mongoose 的 Model 物件轉換成乾淨的 JavaScript 資料陣列
+    .then(todo => res.render('detail', { todo })) // 將資料傳給 index 樣板
+    .catch(error => console.log('Error'))// 錯誤處理
+
+})
+
 
 
 app.listen(port, () => {

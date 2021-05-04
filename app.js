@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose') // 載入 mongoose
 const exphbs = require('express-handlebars')
 const Todo = require('./models/todo') // 載入 Todo model
+const methodOverride = require('method-override')//載入method override
 const app = express()
 const port = 3000
 
@@ -16,6 +17,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 //mongoDatabase
 mongoose.connect('mongodb://localhost/todo-list', { useNewUrlParser: true, useUnifiedTopology: true })
+
+// 設定每筆要求都會透過methodOverride進行前置處理
+app.use(methodOverride('_method'))
 
 const db = mongoose.connection
 
@@ -69,7 +73,7 @@ app.get('/todos/:id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 
-app.post('/todos/:id/edit', (req, res) => {
+app.put('/todos/:id', (req, res) => {
   const id = req.params.id
   const { name, isDone } = req.body
   return Todo.findById(id)
@@ -83,7 +87,7 @@ app.post('/todos/:id/edit', (req, res) => {
 })
 
 //刪除特定頁面
-app.post('/todos/:id/delete', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findById(id)
     .then(todo => todo.remove())
